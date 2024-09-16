@@ -1,11 +1,23 @@
+'use client'
 import { Link } from "@nextui-org/link";
 import { button as buttonStyles } from "@nextui-org/theme";
 import { title, subtitle } from "@/components/primitives";
 import Image from "next/image";
 import heroImage from "@/assets/carhero.png"
 import Card from "@/components/Card";
+import { getCarss } from "@/services";
+import { useEffect, useState } from "react";
+import CarSelect from "@/components/CarSelect";
 
 export default function Home() {
+  const [cars, setCars] = useState([]);
+  useEffect(() => {
+    getCars();
+  }, [])
+  const getCars = async () => {
+    const cars = await getCarss();
+    setCars(cars.carLists);
+  }
   return (
     <div>
       <section className="flex justify-center gap-4 py-8 md:py-10 flex-col-reverse lg:flex-row">
@@ -36,13 +48,19 @@ export default function Home() {
         </div>
         <Image src={heroImage} alt="image" height={500} width={500} />
       </section>
-      <h1 className="text-2xl font-bold">Cars catalog</h1>
-      <p className="mb-4">Explore our wide range of cars</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">Cars catalog</h1>
+          <p className="mb-4">Explore our wide range of cars</p>
+        </div>
+        <div>
+          <CarSelect />
+        </div>
+      </div>
       <div className="grid lg:grid-cols-4 gap-6">
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+        {cars.map((car, index) => (
+          <Card key={index} car={car} />
+        ))}
       </div>
     </div>
   );
